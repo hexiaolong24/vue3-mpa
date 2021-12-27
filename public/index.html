@@ -1,17 +1,74 @@
 <!DOCTYPE html>
-<html lang="">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title><%= htmlWebpackPlugin.options.title %></title>
-  </head>
-  <body>
-    <noscript>
-      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
-    </noscript>
-    <div id="app"></div>
-    <!-- built files will be auto injected -->
-  </body>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta
+            name="viewport"
+            content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, viewport-fit=cover"
+        />
+        <title>
+            <%=htmlWebpackPlugin.options.title%>
+        </title>
+        <script>
+            /**
+             * 处理iOS 微信和客户端6.7.4 键盘收起页面未下移bug
+             */
+            /iphone|ipod|ipad/i.test(navigator.appVersion) &&
+                document.addEventListener(
+                    'blur',
+                    function (e) {
+                        // 这里加了个类型判断，因为a等元素也会触发blur事件
+                        if (['input', 'textarea'].includes(e.target.localName)) {
+                            setTimeout(function() {
+                                window.scrollTo(0, 0);
+                            }, 100);
+                        }
+                    },
+                    true,
+                );
+        </script>
+        <script>
+            !(function (WIN, DOC) {
+                var EL = DOC.documentElement,
+                    DPR = WIN.devicePixelRatio || 1;
+
+                function setFontSize() {
+                    var fontSize = Math.min(EL.clientWidth, 1024) / 18.75; // 20
+                    EL.style.fontSize = fontSize + 'px';
+                }
+
+                (function initFontSize() {
+                    DOC.body
+                        ? (DOC.body.style.fontSize = '16px')
+                        : DOC.addEventListener('DOMContentLoaded', initFontSize);
+                })();
+
+                setFontSize();
+
+                WIN.addEventListener('resize', setFontSize);
+
+                WIN.addEventListener('pageshow', function (e) {
+                    e.persisted && setFontSize();
+                });
+
+                if (2 <= DPR) {
+                    var BODY = DOC.createElement('body'),
+                        DIV = DOC.createElement('div');
+                    DIV.style.border = '.5px solid transparent';
+                    BODY.appendChild(DIV);
+                    EL.appendChild(BODY);
+                    1 === DIV.offsetHeight && EL.classList.add('hairlines');
+                    EL.removeChild(BODY);
+                }
+            })(window, document);
+        </script>
+    </head>
+    
+    <body>
+        <div class="root">
+            <div id="app"></div>
+        </div>
+        <!-- built files will be auto injected -->
+    </body>
 </html>
